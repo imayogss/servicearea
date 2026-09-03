@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIS Dashboard — QGIS Server</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===================================================================
+     🎨 WARNA Dashboard
+     =================================================================== */
+  :root{
+    --ink:        #10171d;   /* warna latar paling gelap (background utama) */
+    --panel:      #16202a;   /* warna sidebar & top bar */
+    --panel-2:    #1d2a36;   /* warna saat hover / kotak lebih terang sedikit */
+    --line:       #2b3a47;   /* warna garis pembatas antar bagian */
+    --paper:      #eef1ec;   /* warna teks utama (terang, di atas latar gelap) */
+    --paper-dim:  #9fb0bd;   /* warna teks redup/sekunder */
+    --contour:    #c98a4b;   /* warna aksen utama (tombol, garis aktif) */
+    --water:      #4fa3c9;   /* warna aksen kedua (checkbox aktif, dll) */
+    --veg:        #6fae72;   /* warna hijau (status "berhasil/terhubung") */
+    --alert:      #d1685a;   /* warna merah (status "error/gagal") */
+    --font-ui:    'IBM Plex Sans', system-ui, sans-serif;   /* font teks biasa — jangan diubah kecuali paham Google Fonts */
+    --font-mono:  'IBM Plex Mono', 'Courier New', monospace; /* font angka/koordinat — jangan diubah kecuali paham Google Fonts */
+  }
+  /* ================== akhir bagian warna — di bawah ini JANGAN DIUBAH ================== */
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:var(--font-ui);
+    background:var(--ink);
+    color:var(--paper);
+    overflow:hidden;
+  }
+
+  /* ---------- App grid ---------- */
+  .app{
+    display:grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: 52px 1fr 28px;
+    grid-template-areas:
+      "topbar topbar"
+      "sidebar map"
+      "status status";
+    height:100vh;
+    width:100vw;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    grid-area:topbar;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:0 16px;
+    background:var(--panel);
+    border-bottom:1px solid var(--line);
+    z-index:20;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-weight:700;
+    letter-spacing:.02em;
+    font-size:15px;
+  }
+  .brand .mark{
+    width:20px;height:20px;
+    border:2px solid var(--contour);
+    border-radius:2px;
+    position:relative;
+    flex:none;
+  }
+  .brand .mark::before{
+    content:"";
+    position:absolute;
+    inset:3px;
+    border:1px solid var(--water);
+  }
+  .brand small{
+    display:block;
+    font-family:var(--font-mono);
+    font-weight:400;
+    font-size:10px;
+    color:var(--paper-dim);
+    letter-spacing:.08em;
+  }
+  .topbar-search{
+    flex:1;
+    max-width:420px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--ink);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:6px 10px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--paper-dim);
+  }
+  .topbar-search input{
+    background:none;border:none;outline:none;
+    color:var(--paper);
+    font-family:var(--font-mono);
+    font-size:12px;
+    width:100%;
+  }
+  .topbar-actions{margin-left:auto;display:flex;gap:8px;}
+  .btn{
+    font-family:var(--font-ui);
+    font-size:12px;
+    font-weight:500;
+    color:var(--paper);
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:7px 12px;
+    cursor:pointer;
+    transition:border-color .15s ease;
+  }
+  .btn:hover{border-color:var(--contour);}
+  .btn.primary{background:var(--contour);border-color:var(--contour);color:#1a1208;}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    grid-area:sidebar;
+    background:var(--panel);
+    border-right:1px solid var(--line);
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+  }
+  .side-section{border-bottom:1px solid var(--line);}
+  .side-section h2{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--paper-dim);
+    font-weight:600;
+    margin:0;
+    padding:14px 16px 8px;
+  }
+
+  .layer-row{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:7px 16px;
+    cursor:default;
+  }
+  .layer-row:hover{background:var(--panel-2);}
+  .layer-row input[type=checkbox]{
+    appearance:none;
+    width:14px;height:14px;
+    border:1.5px solid var(--paper-dim);
+    border-radius:3px;
+    cursor:pointer;
+    flex:none;
+    position:relative;
+  }
+  .layer-row input[type=checkbox]:checked{
+    background:var(--water);
+    border-color:var(--water);
+  }
+  .layer-row input[type=checkbox]:checked::after{
+    content:"";
+    position:absolute;
+    left:4px;top:1px;
+    width:3px;height:7px;
+    border:solid var(--ink);
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
+  .layer-swatch{
+    width:11px;height:11px;
+    border-radius:2px;
+    flex:none;
+    border:1px solid rgba(0,0,0,.25);
+  }
+  .layer-row label{
+    font-size:12.5px;
+    flex:1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .layer-opacity{
+    width:52px;
+    accent-color:var(--water);
+  }
+  .layer-legend{
+    padding:2px 16px 8px 39px;
+    display:none;
+  }
+  .layer-legend.show{display:block;}
+  .layer-legend img{
+    max-width:100%;
+    background:var(--paper);
+    border-radius:3px;
+    display:block;
+  }
+
+  .basemap-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    padding:0 16px 14px;
+  }
+  .basemap-opt{
+    font-size:11px;
+    text-align:center;
+    padding:8px 4px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    cursor:pointer;
+    color:var(--paper-dim);
+  }
+  .basemap-opt.active{border-color:var(--contour);color:var(--paper);background:var(--panel-2);}
+
+  .conn-status{
+    padding:12px 16px 16px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--paper-dim);
+    line-height:1.7;
+  }
+  .conn-status .dot{
+    display:inline-block;
+    width:7px;height:7px;
+    border-radius:50%;
+    margin-right:6px;
+    background:var(--veg);
+  }
+  .conn-status .dot.off{background:var(--alert);}
+
+  /* ---------- Map ---------- */
+  .map-wrap{grid-area:map;position:relative;}
+  #map{width:100%;height:100%;background:#0c1116;}
+
+  .map-overlay-panel{
+    position:absolute;
+    top:14px;right:14px;
+    background:rgba(22,32,42,.92);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:12px 14px;
+    width:190px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    z-index:400;
+  }
+  .map-overlay-panel h3{
+    margin:0 0 8px;
+    font-family:var(--font-ui);
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:var(--paper-dim);
+    font-weight:600;
+  }
+  .stat-line{display:flex;justify-content:space-between;padding:2px 0;color:var(--paper-dim);}
+  .stat-line b{color:var(--paper);font-weight:500;}
+
+  /* ---------- Status bar ---------- */
+  .status{
+    grid-area:status;
+    background:var(--panel);
+    border-top:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:0 16px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--paper-dim);
+  }
+  .status span b{color:var(--paper);font-weight:500;}
+
+  /* Leaflet control tweaks to match theme */
+  .leaflet-control-zoom a{
+    background:var(--panel-2) !important;
+    color:var(--paper) !important;
+    border-color:var(--line) !important;
+  }
+  .leaflet-control-scale-line{
+    background:rgba(22,32,42,.85) !important;
+    border-color:var(--paper-dim) !important;
+    color:var(--paper) !important;
+    font-family:var(--font-mono);
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark"></span>
+      <!-- ✏️ FIELD ATLAS -->
+      <span>FIELD ATLAS<br><small>DASHBOARD PETA · DATA GEOJSON</small></span>
+    </div>
+    <div class="topbar-search">
+      <!-- ✏️ Placeholder -->
+      ⌕ <input id="searchInput" type="text" placeholder="Cari koordinat, contoh: -6.2, 106.8" />
+    </div>
+    <div class="topbar-actions">
+      <!-- ✏️ Topbar Actions -->
+      <button class="btn" id="refreshBtn">Refresh layers</button>
+      <button class="btn primary" id="fitBtn">Fit to data</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- ✏️ Judul kecil "Layers" / "Basemap" / "Server" di bawah ini boleh diganti teksnya -->
+    <div class="side-section">
+      <h2>Layers</h2>
+      <div id="layerList"><!-- diisi otomatis oleh JavaScript, jangan diedit manual --></div>
+    </div>
+
+    <div class="side-section">
+      <h2>Basemap</h2>
+      <div class="basemap-grid" id="basemapGrid"><!-- diisi otomatis oleh JavaScript, jangan diedit manual --></div>
+    </div>
+
+    <div class="side-section" style="border-bottom:none;margin-top:auto;">
+      <h2>Status Data</h2>
+      <div class="conn-status" id="connStatus">
+        <span class="dot off"></span>memuat…
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MAP -->
+  <div class="map-wrap">
+    <div id="map"></div>
+    <!-- ✏️ Kotak kecil pojok kanan atas peta ini isinya otomatis (koordinat mouse, zoom, dll) — cuma judul "Readout" & label yang boleh diganti teksnya -->
+    <div class="map-overlay-panel">
+      <h3>Info Peta</h3>
+      <div class="stat-line"><span>Lat</span><b id="roLat">—</b></div>
+      <div class="stat-line"><span>Lon</span><b id="roLon">—</b></div>
+      <div class="stat-line"><span>Zoom</span><b id="roZoom">—</b></div>
+      <div class="stat-line"><span>Layer aktif</span><b id="roLayers">0</b></div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR — teks id="statusMsg" diisi otomatis oleh JavaScript di bagian CONFIG (lihat komentar STATUS_MSG_*) -->
+  <div class="status">
+    <span>CRS: <b>EPSG:4326</b></span>
+    <span>Sumber data: <b>File GeoJSON lokal</b></span>
+    <span id="statusMsg">Memuat data…</span>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* #####################################################################
+   ⚙️  PENGATURAN — SEMUA YANG BIASA DIEDIT ADA DI SINI
+   Bagian ini satu-satunya tempat yang perlu kamu sentuh untuk:
+   menambah/mengurangi layer, ganti file data, ganti lokasi awal peta.
+   Setelah blok ini ada tulisan "JANGAN DIUBAH" — sebaiknya dilewati
+   kecuali kamu sudah paham JavaScript.
+   ##################################################################### */
+
+// -----------------------------------------------------------------------
+// 1) DAFTAR LAYER (data yang ditampilkan di peta)
+// -----------------------------------------------------------------------
+// Setiap layer = satu file GeoJSON. Cara export dari QGIS:
+//   klik kanan layer → Export → Save Features As… → format GeoJSON →
+//   CRS pilih EPSG:4326 → simpan ke dalam folder "data/" yang sejajar
+//   dengan file HTML ini.
+//
+// Tiap baris di bawah = satu layer, isinya:
+//   name    : nama unik untuk layer ini (bebas, tanpa spasi lebih aman)
+//   label   : teks yang tampil di sidebar (boleh pakai spasi/huruf besar)
+//   color   : warna garis/isi layer di peta, format hex (mis. "#4fa3c9")
+//   file    : lokasi file GeoJSON, relatif dari file HTML ini
+//   visible : true = otomatis tampil saat dibuka, false = tersembunyi dulu
+//
+// Untuk TAMBAH layer baru: copy satu baris "{ ... }," lalu tempel lagi
+// di bawahnya, edit isinya. Untuk HAPUS layer: hapus satu baris "{ ... },"
+const LAYERS = [
+  { name: "service_area_lines", label: "Service Area", color: "#4fa3c9", file: "data/service_area_lines.geojson", visible: true },
+  // Contoh cara menambah layer lain (hapus tanda // di depan untuk mengaktifkan):
+  // { name: "roads", label: "Roads", color: "#c98a4b", file: "data/roads.geojson", visible: true },
+];
+
+// -----------------------------------------------------------------------
+// 2) LOKASI & ZOOM AWAL PETA
+// -----------------------------------------------------------------------
+// INITIAL_VIEW = [latitude, longitude] — titik tengah peta saat pertama dibuka.
+// Cara dapat angka ini: buka Google Maps, klik kanan di lokasi yang mau
+// dijadikan pusat peta, klik angka koordinat yang muncul untuk copy.
+const INITIAL_VIEW = [-2.5, 118.0];   // contoh saat ini: tengah Indonesia
+
+// INITIAL_ZOOM = tingkat perbesaran awal. Angka kecil (3-5) = terlihat luas
+// (satu negara/pulau), angka besar (14-18) = sangat dekat (satu jalan/gedung).
+const INITIAL_ZOOM = 5;
+
+/* ################## AKHIR BAGIAN PENGATURAN #########################
+   Di bawah ini adalah kode logika dashboard. Sebaiknya JANGAN DIUBAH
+   kecuali kamu memang mengerti JavaScript — mengubah bagian ini bisa
+   membuat dashboard berhenti berfungsi.
+   ##################################################################### */
+
+const map = L.map('map', { zoomControl:false, attributionControl:true })
+  .setView(INITIAL_VIEW, INITIAL_ZOOM);
+L.control.zoom({ position:'bottomright' }).addTo(map);
+L.control.scale({ position:'bottomleft', metric:true, imperial:false }).addTo(map);
+
+// ---------- Basemaps ----------
+// ✏️ Boleh diedit: ganti nama ("Dark", "Light", dst — teks ini yang
+// tampil sebagai tombol pilihan di sidebar) atau tambah/hapus baris.
+// JANGAN ubah bagian "L.tileLayer('https://...')" kecuali kamu tahu
+// alamat sumber peta lain yang valid.
+const basemaps = {
+  "Dark":  L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', { attribution:'© CARTO, © OSM' }),
+  "Light": L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', { attribution:'© CARTO, © OSM' }),
+  "Topo":  L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution:'© OpenTopoMap, © OSM' }),
+  "Satellite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution:'© Esri' }),
+};
+let activeBasemapName = "Dark";
+basemaps[activeBasemapName].addTo(map);
+
+const basemapGrid = document.getElementById('basemapGrid');
+Object.keys(basemaps).forEach(name=>{
+  const opt = document.createElement('div');
+  opt.className = 'basemap-opt' + (name === activeBasemapName ? ' active' : '');
+  opt.textContent = name;
+  opt.addEventListener('click', ()=>{
+    map.removeLayer(basemaps[activeBasemapName]);
+    activeBasemapName = name;
+    basemaps[name].addTo(map);
+    document.querySelectorAll('.basemap-opt').forEach(el=>el.classList.remove('active'));
+    opt.classList.add('active');
+    // keep data layers above the basemap
+    Object.values(geoLayerRefs).forEach(l=> l && l.bringToFront());
+  });
+  basemapGrid.appendChild(opt);
+});
+
+// ---------- GeoJSON layers ----------
+// Data can arrive two ways:
+//  1. Injected directly by a host (e.g. Streamlit) as window.INJECTED_GEOJSON = { layerName: {...geojson}, ... }
+//  2. Fetched from cfg.file when opened/served standalone (no injection present)
+const geoLayerRefs = {}; // name -> L.geoJSON instance
+const layerListEl = document.getElementById('layerList');
+const connStatusEl = document.getElementById('connStatus');
+const statusMsgEl = document.getElementById('statusMsg');
+const injected = (typeof window.INJECTED_GEOJSON !== 'undefined') ? window.INJECTED_GEOJSON : null;
+
+let loadedCount = 0, failedCount = 0;
+
+LAYERS.forEach(cfg=>{
+  const row = document.createElement('div');
+  row.className = 'layer-row';
+  row.innerHTML = `
+    <input type="checkbox" ${cfg.visible ? 'checked' : ''} data-layer="${cfg.name}">
+    <span class="layer-swatch" style="background:${cfg.color}"></span>
+    <label title="${cfg.label}">${cfg.label}</label>
+    <input type="range" class="layer-opacity" min="0" max="1" step="0.05" value="1" data-layer-op="${cfg.name}">
+  `;
+  layerListEl.appendChild(row);
+
+  const checkbox = row.querySelector('input[type=checkbox]');
+  const opacitySlider = row.querySelector('input[type=range]');
+
+  // Use injected data if present for this layer name, otherwise fetch the file.
+  const dataPromise = (injected && injected[cfg.name])
+    ? Promise.resolve(injected[cfg.name])
+    : fetch(cfg.file).then(r=>{
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+
+  dataPromise
+    .then(geojson=>{
+      const layer = L.geoJSON(geojson, {
+        style: { color: cfg.color, weight: 2.5, opacity: 1, fillColor: cfg.color, fillOpacity: 0.15 },
+        pointToLayer: (feature, latlng) =>
+          L.circleMarker(latlng, { radius:5, color:cfg.color, weight:2, fillColor:cfg.color, fillOpacity:0.6 }),
+        onEachFeature: (feature, lyr) => {
+          if (feature.properties) {
+            const rows = Object.entries(feature.properties)
+              .map(([k,v])=>`<tr><td style="padding-right:8px;color:var(--paper-dim)">${k}</td><td>${v}</td></tr>`)
+              .join('');
+            lyr.bindPopup(`<table style="font-family:var(--font-mono);font-size:11px">${rows}</table>`);
+          }
+        }
+      });
+      geoLayerRefs[cfg.name] = layer;
+      if (cfg.visible) layer.addTo(map);
+
+      loadedCount++;
+      refreshStatus();
+      updateVisibleCount();
+
+      checkbox.addEventListener('change', e=>{
+        if (e.target.checked) layer.addTo(map);
+        else map.removeLayer(layer);
+        updateVisibleCount();
+      });
+      opacitySlider.addEventListener('input', e=>{
+        const op = parseFloat(e.target.value);
+        layer.setStyle({ opacity: op, fillOpacity: op * 0.15 });
+        layer.eachLayer(l=>{ if (l.setStyle) l.setStyle({ opacity: op, fillOpacity: op * 0.15 }); });
+      });
+    })
+    .catch(err=>{
+      failedCount++;
+      refreshStatus();
+      checkbox.checked = false;
+      checkbox.disabled = true;
+      row.title = `Could not load ${cfg.file}: ${err.message}`;
+      row.style.opacity = '0.45';
+    });
+});
+
+function refreshStatus(){
+  const total = LAYERS.length;
+  if (loadedCount + failedCount < total) return; // masih proses memuat
+  if (failedCount === 0){
+    connStatusEl.innerHTML = '<span class="dot"></span>' + loadedCount + ' layer berhasil dimuat';
+    statusMsgEl.textContent = 'Membaca file GeoJSON lokal — tidak perlu server.';
+  } else if (loadedCount === 0){
+    connStatusEl.innerHTML = '<span class="dot off"></span>tidak ada layer termuat — cek lokasi file';
+    statusMsgEl.textContent = 'File GeoJSON tidak ditemukan. Cek kembali "file" di daftar LAYERS, cocokkan dengan folder data/.';
+  } else {
+    connStatusEl.innerHTML = '<span class="dot"></span>' + loadedCount + '/' + total + ' layer termuat';
+    statusMsgEl.textContent = failedCount + ' layer gagal dimuat — cek lokasi file di LAYERS.';
+  }
+}
+
+function updateVisibleCount(){
+  const n = Object.values(geoLayerRefs).filter(l=> map.hasLayer(l)).length;
+  document.getElementById('roLayers').textContent = n;
+}
+
+document.getElementById('refreshBtn').addEventListener('click', ()=> location.reload());
+document.getElementById('fitBtn').addEventListener('click', ()=>{
+  map.setView(INITIAL_VIEW, INITIAL_ZOOM);
+});
+
+// ---------- Coordinate readout ----------
+map.on('mousemove', e=>{
+  document.getElementById('roLat').textContent = e.latlng.lat.toFixed(5);
+  document.getElementById('roLon').textContent = e.latlng.lng.toFixed(5);
+});
+map.on('zoomend', ()=>{
+  document.getElementById('roZoom').textContent = map.getZoom();
+});
+document.getElementById('roZoom').textContent = map.getZoom();
+
+// ---------- Search: "lat, lon" jump ----------
+document.getElementById('searchInput').addEventListener('keydown', e=>{
+  if (e.key !== 'Enter') return;
+  const parts = e.target.value.split(',').map(s=>parseFloat(s.trim()));
+  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])){
+    map.setView([parts[0], parts[1]], 12);
+    L.circleMarker([parts[0], parts[1]], { radius:6, color:'#d1685a', weight:2, fillOpacity:.3 }).addTo(map);
+  }
+});
+</script>
+
+</body>
+</html>
