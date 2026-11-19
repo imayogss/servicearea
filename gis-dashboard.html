@@ -8,24 +8,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* ===================================================================
-     🎨 WARNA Dashboard
-     =================================================================== */
+  /* ====================================================================================================================================== */
   :root{
-    --ink:        #10171d;   /* warna latar paling gelap (background utama) */
-    --panel:      #16202a;   /* warna sidebar & top bar */
-    --panel-2:    #1d2a36;   /* warna saat hover / kotak lebih terang sedikit */
+    --ink:        #10171d;   /* Main color */
+    --panel:      #16202a;   /* Sidebar & top bar */
+    --panel-2:    #1d2a36;   /* Hover */
     --line:       #2b3a47;   /* warna garis pembatas antar bagian */
-    --paper:      #eef1ec;   /* warna teks utama (terang, di atas latar gelap) */
-    --paper-dim:  #9fb0bd;   /* warna teks redup/sekunder */
-    --contour:    #c98a4b;   /* warna aksen utama (tombol, garis aktif) */
-    --water:      #4fa3c9;   /* warna aksen kedua (checkbox aktif, dll) */
-    --veg:        #6fae72;   /* warna hijau (status "berhasil/terhubung") */
-    --alert:      #d1685a;   /* warna merah (status "error/gagal") */
-    --font-ui:    'IBM Plex Sans', system-ui, sans-serif;   /* font teks biasa — jangan diubah kecuali paham Google Fonts */
-    --font-mono:  'IBM Plex Mono', 'Courier New', monospace; /* font angka/koordinat — jangan diubah kecuali paham Google Fonts */
+    --paper:      #eef1ec;   /* Heading 1 */
+    --paper-dim:  #9fb0bd;   /* Content */
+    --contour:    #c98a4b;   /* Secondary color */
+    --water:      #4fa3c9;   /* Tertiary color */
+    --veg:        #6fae72;   /* Success */
+    --alert:      #d1685a;   /* Alert */
+    --font-ui:    'IBM Plex Sans', system-ui, sans-serif;   /* Content font */
+    --font-mono:  'IBM Plex Mono', 'Courier New', monospace; /* Number font */
   }
-  /* ================== akhir bagian warna — di bawah ini JANGAN DIUBAH ================== */
+  /* ====================================================================================================================================== */
 
   *{box-sizing:border-box;}
   html,body{height:100%;margin:0;}
@@ -303,15 +301,15 @@
   <div class="topbar">
     <div class="brand">
       <span class="mark"></span>
-      <!-- ✏️ FIELD ATLAS -->
+      <!-- FIELD ATLAS -->
       <span>FIELD ATLAS<br><small>DASHBOARD PETA · DATA GEOJSON</small></span>
     </div>
     <div class="topbar-search">
-      <!-- ✏️ Placeholder -->
+      <!-- Placeholder -->
       ⌕ <input id="searchInput" type="text" placeholder="Cari koordinat, contoh: -6.2, 106.8" />
     </div>
     <div class="topbar-actions">
-      <!-- ✏️ Topbar Actions -->
+      <!-- Topbar Actions -->
       <button class="btn" id="refreshBtn">Refresh layers</button>
       <button class="btn primary" id="fitBtn">Fit to data</button>
     </div>
@@ -320,15 +318,15 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
 
-    <!-- ✏️ Judul kecil "Layers" / "Basemap" / "Server" di bawah ini boleh diganti teksnya -->
+    <!-- Judul kecil "Layers" / "Basemap" / "Server" di bawah ini boleh diganti teksnya -->
     <div class="side-section">
       <h2>Layers</h2>
-      <div id="layerList"><!-- diisi otomatis oleh JavaScript, jangan diedit manual --></div>
+      <div id="layerList"><!--  --></div>
     </div>
 
     <div class="side-section">
       <h2>Basemap</h2>
-      <div class="basemap-grid" id="basemapGrid"><!-- diisi otomatis oleh JavaScript, jangan diedit manual --></div>
+      <div class="basemap-grid" id="basemapGrid"><!--  --></div>
     </div>
 
     <div class="side-section" style="border-bottom:none;margin-top:auto;">
@@ -343,7 +341,7 @@
   <!-- MAP -->
   <div class="map-wrap">
     <div id="map"></div>
-    <!-- ✏️ Kotak kecil pojok kanan atas peta ini isinya otomatis (koordinat mouse, zoom, dll) — cuma judul "Readout" & label yang boleh diganti teksnya -->
+    <!-- -->
     <div class="map-overlay-panel">
       <h3>Info Peta</h3>
       <div class="stat-line"><span>Lat</span><b id="roLat">—</b></div>
@@ -353,7 +351,7 @@
     </div>
   </div>
 
-  <!-- STATUS BAR — teks id="statusMsg" diisi otomatis oleh JavaScript di bagian CONFIG (lihat komentar STATUS_MSG_*) -->
+  <!--  -->
   <div class="status">
     <span>CRS: <b>EPSG:4326</b></span>
     <span>Sumber data: <b>File GeoJSON lokal</b></span>
@@ -364,54 +362,21 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-/* #####################################################################
-   ⚙️  PENGATURAN — SEMUA YANG BIASA DIEDIT ADA DI SINI
-   Bagian ini satu-satunya tempat yang perlu kamu sentuh untuk:
-   menambah/mengurangi layer, ganti file data, ganti lokasi awal peta.
-   Setelah blok ini ada tulisan "JANGAN DIUBAH" — sebaiknya dilewati
-   kecuali kamu sudah paham JavaScript.
-   ##################################################################### */
 
+/* ====================================================================================================================================== */
 // -----------------------------------------------------------------------
-// 1) DAFTAR LAYER (data yang ditampilkan di peta)
+// 1) Layer
 // -----------------------------------------------------------------------
-// Setiap layer = satu file GeoJSON. Cara export dari QGIS:
-//   klik kanan layer → Export → Save Features As… → format GeoJSON →
-//   CRS pilih EPSG:4326 → simpan ke dalam folder "data/" yang sejajar
-//   dengan file HTML ini.
-//
-// Tiap baris di bawah = satu layer, isinya:
-//   name    : nama unik untuk layer ini (bebas, tanpa spasi lebih aman)
-//   label   : teks yang tampil di sidebar (boleh pakai spasi/huruf besar)
-//   color   : warna garis/isi layer di peta, format hex (mis. "#4fa3c9")
-//   file    : lokasi file GeoJSON, relatif dari file HTML ini
-//   visible : true = otomatis tampil saat dibuka, false = tersembunyi dulu
-//
-// Untuk TAMBAH layer baru: copy satu baris "{ ... }," lalu tempel lagi
-// di bawahnya, edit isinya. Untuk HAPUS layer: hapus satu baris "{ ... },"
 const LAYERS = [
   { name: "service_area_lines", label: "Service Area", color: "#4fa3c9", file: "servicearea/repro.geojson", visible: true },
-  // Contoh cara menambah layer lain (hapus tanda // di depan untuk mengaktifkan):
-  // { name: "roads", label: "Roads", color: "#c98a4b", file: "data/roads.geojson", visible: true },
 ];
 
 // -----------------------------------------------------------------------
 // 2) LOKASI & ZOOM AWAL PETA
 // -----------------------------------------------------------------------
-// INITIAL_VIEW = [latitude, longitude] — titik tengah peta saat pertama dibuka.
-// Cara dapat angka ini: buka Google Maps, klik kanan di lokasi yang mau
-// dijadikan pusat peta, klik angka koordinat yang muncul untuk copy.
-const INITIAL_VIEW = [-2.5, 118.0];   // contoh saat ini: tengah Indonesia
-
-// INITIAL_ZOOM = tingkat perbesaran awal. Angka kecil (3-5) = terlihat luas
-// (satu negara/pulau), angka besar (14-18) = sangat dekat (satu jalan/gedung).
+const INITIAL_VIEW = [-2.5, 118.0];
 const INITIAL_ZOOM = 5;
-
-/* ################## AKHIR BAGIAN PENGATURAN #########################
-   Di bawah ini adalah kode logika dashboard. Sebaiknya JANGAN DIUBAH
-   kecuali kamu memang mengerti JavaScript — mengubah bagian ini bisa
-   membuat dashboard berhenti berfungsi.
-   ##################################################################### */
+/* ====================================================================================================================================== */
 
 const map = L.map('map', { zoomControl:false, attributionControl:true })
   .setView(INITIAL_VIEW, INITIAL_ZOOM);
@@ -419,10 +384,6 @@ L.control.zoom({ position:'bottomright' }).addTo(map);
 L.control.scale({ position:'bottomleft', metric:true, imperial:false }).addTo(map);
 
 // ---------- Basemaps ----------
-// ✏️ Boleh diedit: ganti nama ("Dark", "Light", dst — teks ini yang
-// tampil sebagai tombol pilihan di sidebar) atau tambah/hapus baris.
-// JANGAN ubah bagian "L.tileLayer('https://...')" kecuali kamu tahu
-// alamat sumber peta lain yang valid.
 const basemaps = {
   "Dark":  L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', { attribution:'© CARTO, © OSM' }),
   "Light": L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', { attribution:'© CARTO, © OSM' }),
@@ -450,9 +411,6 @@ Object.keys(basemaps).forEach(name=>{
 });
 
 // ---------- GeoJSON layers ----------
-// Data can arrive two ways:
-//  1. Injected directly by a host (e.g. Streamlit) as window.INJECTED_GEOJSON = { layerName: {...geojson}, ... }
-//  2. Fetched from cfg.file when opened/served standalone (no injection present)
 const geoLayerRefs = {}; // name -> L.geoJSON instance
 const layerListEl = document.getElementById('layerList');
 const connStatusEl = document.getElementById('connStatus');
