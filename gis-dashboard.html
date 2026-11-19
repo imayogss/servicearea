@@ -368,7 +368,7 @@
 // 1) Layer
 // -----------------------------------------------------------------------
 const LAYERS = [
-  { name: "service_area_lines", label: "Service Area", color: "#4fa3c9", file: "servicearea/repro.geojson", visible: true },
+  { name: "service_area_lines", label: "Service Area", color: "#4fa3c9", file: "repro.geojson", visible: true },
 ];
 
 // -----------------------------------------------------------------------
@@ -385,8 +385,8 @@ L.control.scale({ position:'bottomleft', metric:true, imperial:false }).addTo(ma
 
 // ---------- Basemaps ----------
 const basemaps = {
-  "Dark":  L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', { attribution:'© CARTO, © OSM' }),
-  "Light": L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', { attribution:'© CARTO, © OSM' }),
+  "Dark":  L.tileLayer('https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=cb1_508c_1_ca0ef28ec094b9382ca51bf1', { attribution:'© CARTO, © OSM' }),
+  "Light": L.tileLayer('https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_508c_1_ca0ef28ec094b9382ca51bf1', { attribution:'© CARTO, © OSM' }),
   "Topo":  L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution:'© OpenTopoMap, © OSM' }),
   "Satellite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution:'© Esri' }),
 };
