@@ -12,58 +12,136 @@
 *{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:var(--font-ui);background:var(--ink);color:var(--paper);overflow:hidden}
 .app{display:grid;grid-template-columns:300px 1fr;grid-template-rows:52px 1fr 28px;grid-template-areas:'topbar topbar' 'sidebar map' 'status status';height:100vh;width:100vw}
 .topbar{grid-area:topbar;display:flex;align-items:center;gap:14px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--line);z-index:20}.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.02em;font-size:15px}.brand .mark{width:20px;height:20px;border:2px solid var(--contour);border-radius:2px;position:relative;flex:none}.brand .mark:before{content:"";position:absolute;inset:3px;border:1px solid var(--water)}.brand small{display:block;font:400 10px var(--font-mono);color:var(--paper-dim);letter-spacing:.08em}
-.topbar-search{flex:1;max-width:420px;display:flex;align-items:center;gap:8px;background:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:12px var(--font-mono);color:var(--paper-dim)}.topbar-search input{background:none;border:0;outline:0;color:var(--paper);font:12px var(--font-mono);width:100%}.topbar-actions{margin-left:auto;display:flex;gap:8px}.btn{font:500 12px var(--font-ui);color:var(--paper);background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:7px 12px;cursor:pointer;transition:border-color .15s ease}.btn:hover{border-color:var(--contour)}
-.sidebar{grid-area:sidebar;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;display:flex;flex-direction:column}.side-section{border-bottom:1px solid var(--line)}.side-section h2{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--paper-dim);font-weight:600;margin:0;padding:14px 16px 8px}.hint{padding:0 16px 10px;color:var(--paper-dim);font-size:11px;line-height:1.5}.route-picker{padding:0 16px 14px}.route-picker select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:4px;background:var(--ink);color:var(--paper);font:12px var(--font-ui);outline:none}.route-picker select:focus{border-color:var(--water)}.route-picker select:disabled{opacity:.6;cursor:wait}.route-tools{display:flex;align-items:center;justify-content:space-between;margin-top:8px;color:var(--paper-dim);font-size:11px}.route-tools button{border:0;background:none;color:var(--water);font:inherit;cursor:pointer;padding:0}.route-tools button:hover{color:var(--paper)}
+.topbar-search{flex:1;max-width:420px;display:flex;align-items:center;gap:8px;background:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:12px var(--font-mono);color:var(--paper-dim)}.topbar-search input{background:none;border:0;outline:0;color:var(--paper);font:12px var(--font-mono);width:100%}.topbar-actions{margin-left:auto;display:flex;gap:8px}.btn{font:500 12px var(--font-ui);color:var(--paper);background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:7px 12px;cursor:pointer}.btn:hover{border-color:var(--contour)}
+.sidebar{grid-area:sidebar;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;display:flex;flex-direction:column}.side-section{border-bottom:1px solid var(--line)}.side-section h2{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--paper-dim);font-weight:600;margin:0;padding:14px 16px 8px}.hint{padding:0 16px 9px;color:var(--paper-dim);font-size:11px;line-height:1.5}.route-list{max-height:42vh;overflow-y:auto;padding-bottom:8px}.route-row{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:12.5px;cursor:pointer}.route-row:hover{background:var(--panel-2)}.route-row input{accent-color:var(--water);margin:0;flex:none}.route-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.route-count{font:10px var(--font-mono);color:var(--paper-dim)}.combo{position:relative}.route-search{width:100%;background:var(--ink);color:var(--paper);border:1px solid var(--line);border-radius:4px;padding:8px 10px;font:12.5px var(--font-ui)}.route-search:focus{outline:0;border-color:var(--contour)}.route-options{display:none;position:absolute;left:0;right:0;top:100%;max-height:260px;overflow-y:auto;background:var(--ink);border:1px solid var(--line);border-radius:4px;margin:4px 0 0;padding:4px 0;list-style:none;z-index:50;box-shadow:0 8px 24px #0008}.route-options.open{display:block}.route-options li{padding:7px 10px;font-size:12.5px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}.route-options li small{color:var(--paper-dim);font:10px var(--font-mono);white-space:nowrap}.route-options li:hover,.route-options li.hl{background:var(--panel-2)}.route-options li.empty{color:var(--paper-dim);cursor:default}.route-options li.empty:hover{background:none}.route-popup .leaflet-popup-content-wrapper{background:var(--panel);color:var(--paper);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 28px #000a}.route-popup .leaflet-popup-tip{background:var(--panel)}.route-popup .leaflet-popup-content{margin:12px 14px}.route-popup a.leaflet-popup-close-button{color:var(--paper-dim)}.route-popup hr{border:0;border-top:1px solid var(--line);margin:8px 0}.route-popup .tooltip-detail{max-height:240px;overflow-y:auto}.tooltip-note{font:italic 11px var(--font-ui);color:var(--paper-dim);margin-bottom:6px}
+.route-tools{display:flex;align-items:center;justify-content:space-between;padding:0 16px 10px;color:var(--paper-dim);font-size:11px}.route-tools button{border:0;background:none;color:var(--water);font:inherit;cursor:pointer;padding:0}.route-tools button:hover{color:var(--paper)}
 .basemap-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 14px}.basemap-opt{font-size:11px;text-align:center;padding:8px 4px;border:1px solid var(--line);border-radius:4px;cursor:pointer;color:var(--paper-dim)}.basemap-opt.active{border-color:var(--contour);color:var(--paper);background:var(--panel-2)}.conn-status{padding:12px 16px 16px;font:11px/1.7 var(--font-mono);color:var(--paper-dim)}.conn-status .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--veg)}.conn-status .dot.off{background:var(--alert)}
-.map-wrap{grid-area:map;position:relative}#map{width:100%;height:100%;background:#0c1116}.map-overlay-panel{position:absolute;top:14px;right:14px;background:rgba(22,32,42,.92);border:1px solid var(--line);border-radius:6px;padding:12px 14px;width:190px;font:11px var(--font-mono);z-index:400;pointer-events:none}.map-overlay-panel h3{margin:0 0 8px;font:600 10px var(--font-ui);text-transform:uppercase;letter-spacing:.1em;color:var(--paper-dim)}.stat-line{display:flex;justify-content:space-between;padding:2px 0;color:var(--paper-dim)}.stat-line b{color:var(--paper);font-weight:500}.status{grid-area:status;background:var(--panel);border-top:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:0 16px;font:10.5px var(--font-mono);color:var(--paper-dim)}.status b{color:var(--paper);font-weight:500}
-.leaflet-control-zoom a{background:var(--panel-2)!important;color:var(--paper)!important;border-color:var(--line)!important}.leaflet-control-scale-line{background:rgba(22,32,42,.85)!important;border-color:var(--paper-dim)!important;color:var(--paper)!important;font-family:var(--font-mono)}.route-tooltip{background:var(--panel);color:var(--paper);border:1px solid var(--line);box-shadow:0 4px 16px #0008;white-space:normal;max-width:320px}.route-tooltip:before{border-top-color:var(--line)!important}.tooltip-title{font:600 12px var(--font-ui);margin-bottom:6px;color:var(--contour)}.tooltip-detail{font:11px/1.5 var(--font-mono);overflow-wrap:anywhere}.tooltip-detail strong{color:var(--paper-dim);font-weight:400;margin-right:6px}
+.map-wrap{grid-area:map;position:relative}#map{width:100%;height:100%;background:#0c1116}.map-overlay-panel{position:absolute;top:14px;right:14px;background:rgba(22,32,42,.92);border:1px solid var(--line);border-radius:6px;padding:12px 14px;width:190px;font:11px var(--font-mono);z-index:400;pointer-events:none}.map-overlay-panel h3{margin:0 0 8px;font:600 10px var(--font-ui);text-transform:uppercase;letter-spacing:.1em;color:var(--paper-dim)}.stat-line{display:flex;justify-content:space-between;padding:2px 0;color:var(--paper-dim)}.stat-line b{color:var(--paper);font-weight:500}.status{grid-area:status;background:var(--panel);border-top:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:0 16px;font:10.5px var(--font-mono);color:var(--paper-dim)}.status b{color:var(--paper);font-weight:500}.leaflet-control-zoom a{background:var(--panel-2)!important;color:var(--paper)!important;border-color:var(--line)!important}.leaflet-control-scale-line{background:rgba(22,32,42,.85)!important;border-color:var(--paper-dim)!important;color:var(--paper)!important;font-family:var(--font-mono)}.route-tooltip{background:var(--panel);color:var(--paper);border:1px solid var(--line);box-shadow:0 4px 16px #0008;white-space:normal;max-width:320px}.route-tooltip:before{border-top-color:var(--line)!important}.tooltip-title{font:600 12px var(--font-ui);margin-bottom:6px;color:var(--contour)}.tooltip-detail{font:11px/1.5 var(--font-mono);overflow-wrap:anywhere}.tooltip-detail strong{color:var(--paper-dim);font-weight:400;margin-right:6px}
 @media(max-width:700px){.app{grid-template-columns:220px 1fr}.brand small{display:none}.topbar{gap:8px;padding:0 8px}.topbar-search{max-width:none}.topbar-actions .btn{padding:7px}.status{gap:8px;font-size:9px;padding:0 8px}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div class="brand"><span class="mark"></span><span>FIELD ATLAS<br><small>BUS ROUTE DASHBOARD</small></span></div>
+    <div class="Transjakarta"><span class="mark"></span><span>DASHBOARD<br><small>EVALUASI RUTE</small></span></div>
     <div class="topbar-search">⌕ <input id="searchInput" type="text" placeholder="Cari koordinat, contoh: -6.2, 106.8" aria-label="Search coordinates"></div>
     <div class="topbar-actions"><button class="btn" id="refreshBtn">Refresh layers</button><button class="btn" id="fitBtn">Fit selected</button></div>
   </div>
   <div class="sidebar">
-    <section class="side-section">
-      <h2>Bus route</h2>
-      <div class="hint">Pilih satu rute dari daftar. Arah perjalanan/segmen yang mempunyai route ID sama akan ditampilkan bersama. Arahkan kursor ke garis untuk melihat detail.</div>
-      <div class="route-picker">
-        <select id="routeSelect" aria-label="Select a bus route" disabled><option value="">Memuat rute…</option></select>
-        <div class="route-tools"><span id="routeCount">Memuat data…</span><button id="clearRoute" type="button">Hapus pilihan</button></div>
-      </div>
-    </section>
+    <section class="side-section"><h2>Bus routes</h2><div class="hint" id="routeHint">Ketik untuk mencari rute, lalu pilih dari daftar. Klik garis rute di peta untuk melihat detailnya.</div><div class="route-tools"><span id="routeCount">Memuat rute…</span><button id="clearRoutes" type="button">Hapus pilihan</button></div><div style="padding:0 16px 14px"><div class="combo" id="routeCombo"><input id="routeSearch" class="route-search" type="text" placeholder="Cari / pilih rute…" autocomplete="off" aria-label="Cari rute bus"><ul id="routeOptions" class="route-options" role="listbox"></ul></div></div></section>
     <section class="side-section"><h2>Basemap</h2><div class="basemap-grid" id="basemapGrid"></div></section>
     <section class="side-section" style="border-bottom:none;margin-top:auto"><h2>Status Data</h2><div class="conn-status" id="connStatus"><span class="dot off"></span>memuat…</div></section>
   </div>
   <div class="map-wrap"><div id="map"></div><div class="map-overlay-panel"><h3>Info Peta</h3><div class="stat-line"><span>Lat</span><b id="roLat">—</b></div><div class="stat-line"><span>Lon</span><b id="roLon">—</b></div><div class="stat-line"><span>Zoom</span><b id="roZoom">—</b></div><div class="stat-line"><span>Rute aktif</span><b id="roRoutes">0</b></div></div></div>
-  <div class="status"><span>CRS: <b>EPSG:4326</b></span><span>Sumber data: <b>route.geojson</b></span><span id="statusMsg">Memuat data…</span></div>
+  <div class="status"><span>CRS: <b>EPSG:4326</b></span><span>Sumber data: <b>route.geojson</b></span><span id="sheetStatus">Sheets: —</span><span id="statusMsg">Memuat data…</span></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
+// Route names are read from GeoJSON properties (common route/name fields are detected automatically).
 const DATA_FILE='route.geojson';
-const INITIAL_VIEW=[-6.2,106.8],INITIAL_ZOOM=11;
+
+// ===== GOOGLE SHEETS: detail rute yang muncul saat garis rute diklik =====
+// Cara dapat url: Google Sheets -> File -> Share -> Publish to web -> pilih tab
+// yang berisi detail rute -> format "Comma-separated values (.csv)" -> Publish -> copy link.
+// Kosongkan url ('') untuk menonaktifkan; popup lalu menampilkan atribut GeoJSON saja.
+const SHEETS_CONFIG={
+  url:'',                 // <- tempel link CSV dari Google Sheets di sini
+  idField:'route_id',     // <- nama kolom di Sheets yang isinya SAMA dengan nama rute di GeoJSON
+  fields:[]               // [] = tampilkan semua kolom. Atau atur manual, contoh:
+                          // [{field:'operator',label:'Operator'},{field:'jam_operasi',label:'Jam Operasional'}]
+};
+const INITIAL_VIEW=[-2.5,118.0], INITIAL_ZOOM=5;
 const map=L.map('map',{zoomControl:false,attributionControl:true}).setView(INITIAL_VIEW,INITIAL_ZOOM);
 L.control.zoom({position:'bottomright'}).addTo(map);L.control.scale({position:'bottomleft',metric:true,imperial:false}).addTo(map);
 const basemaps={Dark:L.tileLayer('https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png?key=cb1_508c_1_ca0ef28ec094b9382ca51bf1',{attribution:'© CARTO, © OSM'}),Light:L.tileLayer('https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png?key=cb1_508c_1_ca0ef28ec094b9382ca51bf1',{attribution:'© CARTO, © OSM'}),Topo:L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{attribution:'© OpenTopoMap, © OSM'}),Satellite:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri'})};
 let activeBasemap='Dark';basemaps[activeBasemap].addTo(map);const basemapGrid=document.getElementById('basemapGrid');
-Object.keys(basemaps).forEach(name=>{const el=document.createElement('div');el.className='basemap-opt'+(name===activeBasemap?' active':'');el.textContent=name;el.addEventListener('click',()=>{map.removeLayer(basemaps[activeBasemap]);activeBasemap=name;basemaps[name].addTo(map);document.querySelectorAll('.basemap-opt').forEach(item=>item.classList.toggle('active',item===el));if(selectedRouteLayer)selectedRouteLayer.bringToFront()});basemapGrid.appendChild(el)});
-const routeLayers=new Map(),routeSelect=document.getElementById('routeSelect'),routeCount=document.getElementById('routeCount'),connStatus=document.getElementById('connStatus'),statusMsg=document.getElementById('statusMsg');let selectedRouteLayer=null;
-const colors=['#4fa3c9','#c98a4b','#6fae72','#d1685a','#a78bca','#d6bd59','#5fc2a4','#e38ba5'];
-function textValue(value){if(value===null||value===undefined||value==='')return '';return typeof value==='object'?JSON.stringify(value):String(value)}
-function makeTooltip(route,properties){const box=document.createElement('div'),title=document.createElement('div');title.className='tooltip-title';title.textContent=`${route.routeId} · ${route.routeName}`;box.appendChild(title);const detail=document.createElement('div');detail.className='tooltip-detail';Object.entries(properties||{}).forEach(([key,value])=>{const row=document.createElement('div'),label=document.createElement('strong');label.textContent=key+':';row.appendChild(label);row.appendChild(document.createTextNode(' '+(textValue(value)||'—')));detail.appendChild(row)});box.appendChild(detail);return box}
-function styleFor(color,hover){return{color,weight:hover?5:3,opacity:1,fillColor:color,fillOpacity:.15}}
-function setSelectedRoute(routeId){if(selectedRouteLayer)map.removeLayer(selectedRouteLayer);selectedRouteLayer=routeId?routeLayers.get(routeId)||null:null;if(selectedRouteLayer)selectedRouteLayer.addTo(map);document.getElementById('roRoutes').textContent=selectedRouteLayer?'1':'0';routeCount.textContent=selectedRouteLayer?'1 route selected':`${routeLayers.size} routes available`;}
-function makeRouteLayer(route,features,color){return L.geoJSON({type:'FeatureCollection',features},{style:()=>styleFor(color,false),onEachFeature:(feature,layer)=>{layer.bindTooltip(()=>makeTooltip(route,feature.properties),{sticky:true,direction:'top',className:'route-tooltip'});layer.on({mouseover:()=>layer.setStyle(styleFor(color,true)),mouseout:()=>layer.setStyle(styleFor(color,false))})}})}
-function loadRoutes(geojson){if(!geojson||!Array.isArray(geojson.features))throw new Error('GeoJSON must contain a FeatureCollection features array.');const groups=new Map();geojson.features.filter(feature=>feature&&feature.geometry).forEach((feature,index)=>{const props=feature.properties||{};const routeId=textValue(props.route_id).trim()||textValue(props.trip_id).trim()||`feature-${index+1}`;if(!groups.has(routeId)){groups.set(routeId,{routeId,routeName:textValue(props.route_long_name).trim()||textValue(props.trip_short_name).trim()||routeId,features:[]})}groups.get(routeId).features.push(feature)});if(!groups.size)throw new Error('No route features found.');let colorIndex=0;groups.forEach((route,routeId)=>{const option=document.createElement('option');option.value=routeId;option.textContent=`${routeId} — ${route.routeName}`;routeSelect.appendChild(option);routeLayers.set(routeId,makeRouteLayer(route,route.features,colors[colorIndex++%colors.length]))});routeSelect.disabled=false;routeSelect.value='';routeCount.textContent=`${groups.size} routes available`;connStatus.innerHTML='<span class="dot"></span>'+geojson.features.length+' route features loaded';statusMsg.textContent=`${groups.size} bus routes found. Select one from the dropdown; hover over a route line for its details.`}
-fetch(DATA_FILE).then(response=>{if(!response.ok)throw new Error('HTTP '+response.status);return response.json()}).then(loadRoutes).catch(error=>{routeSelect.innerHTML='<option value="">Routes unavailable</option>';routeSelect.disabled=true;routeCount.textContent='No routes available';connStatus.innerHTML='<span class="dot off"></span>route data could not be loaded';statusMsg.textContent=`Could not load ${DATA_FILE}: ${error.message}`});
-routeSelect.addEventListener('change',()=>setSelectedRoute(routeSelect.value));document.getElementById('clearRoute').addEventListener('click',()=>{routeSelect.value='';setSelectedRoute('')});
-document.getElementById('refreshBtn').addEventListener('click',()=>location.reload());document.getElementById('fitBtn').addEventListener('click',()=>{if(!selectedRouteLayer){map.setView(INITIAL_VIEW,INITIAL_ZOOM);return}const bounds=selectedRouteLayer.getBounds();if(bounds.isValid())map.fitBounds(bounds,{padding:[24,24],maxZoom:16})});
-map.on('mousemove',event=>{document.getElementById('roLat').textContent=event.latlng.lat.toFixed(5);document.getElementById('roLon').textContent=event.latlng.lng.toFixed(5)});map.on('zoomend',()=>{document.getElementById('roZoom').textContent=map.getZoom()});document.getElementById('roZoom').textContent=map.getZoom();
-document.getElementById('searchInput').addEventListener('keydown',event=>{if(event.key!=='Enter')return;const coordinates=event.target.value.split(',').map(value=>parseFloat(value.trim()));if(coordinates.length===2&&coordinates.every(Number.isFinite)){map.setView(coordinates,12);L.circleMarker(coordinates,{radius:6,color:'#d1685a',weight:2,fillOpacity:.3}).addTo(map)}});
+Object.keys(basemaps).forEach(name=>{const el=document.createElement('div');el.className='basemap-opt'+(name===activeBasemap?' active':'');el.textContent=name;el.addEventListener('click',()=>{map.removeLayer(basemaps[activeBasemap]);activeBasemap=name;basemaps[name].addTo(map);document.querySelectorAll('.basemap-opt').forEach(x=>x.classList.toggle('active',x===el));Object.values(routeLayers).forEach(l=>l.bringToFront())});basemapGrid.appendChild(el)});
+const routeLayers=new Map(),routeIndex=[],routeSearch=document.getElementById('routeSearch'),routeOptionsEl=document.getElementById('routeOptions'),routeCountEl=document.getElementById('routeCount'),connStatus=document.getElementById('connStatus'),statusMsg=document.getElementById('statusMsg');
+const routeFieldCandidates=['route_name','bus_route_name','route','route_id','route_code','bus_route','line_name','route_no','name'];
+function normalizeKey(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,'')}
+function propertyValue(value){if(value===null||value===undefined||value==='')return '';return typeof value==='object'?JSON.stringify(value):String(value)}
+function safeRouteKey(value){return propertyValue(value).trim()||'Unnamed route'}
+function makeTooltip(routeName){const box=document.createElement('div'),title=document.createElement('div');title.className='tooltip-title';title.textContent=routeName;box.appendChild(title);const hint=document.createElement('div');hint.className='tooltip-detail';hint.textContent='Klik untuk melihat detail';box.appendChild(hint);return box}
+const sheetsByRoute=new Map(),sheetStatusEl=document.getElementById('sheetStatus');
+function loadSheets(){
+  if(!SHEETS_CONFIG.url){sheetStatusEl.textContent='Sheets: belum diatur';return}
+  sheetStatusEl.textContent='Sheets: memuat…';
+  fetch(SHEETS_CONFIG.url).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}).then(text=>{
+    const parsed=Papa.parse(text,{header:true,skipEmptyLines:true}),fields=parsed.meta.fields||[];
+    const idCol=fields.find(f=>normalizeKey(f)===normalizeKey(SHEETS_CONFIG.idField));
+    if(!idCol)throw new Error('kolom "'+SHEETS_CONFIG.idField+'" tidak ada (kolom tersedia: '+fields.join(', ')+')');
+    let n=0;parsed.data.forEach(row=>{const k=normalizeKey(row[idCol]);if(!k)return;if(!sheetsByRoute.has(k))sheetsByRoute.set(k,[]);sheetsByRoute.get(k).push(row);n++});
+    sheetStatusEl.textContent='Sheets: '+n+' baris';
+  }).catch(err=>{sheetStatusEl.textContent='Sheets: gagal dimuat';sheetStatusEl.title=err.message;console.error('Gagal memuat Google Sheets:',err)});
+}
+function appendRows(container,entries){entries.forEach(([label,value])=>{const row=document.createElement('div'),strong=document.createElement('strong');strong.textContent=label+':';row.appendChild(strong);row.appendChild(document.createTextNode(' '+(propertyValue(value)||'—')));container.appendChild(row)})}
+function makeDetailPopup(routeName,geoProps){
+  const box=document.createElement('div'),title=document.createElement('div');title.className='tooltip-title';title.textContent=routeName;box.appendChild(title);
+  const rows=sheetsByRoute.get(normalizeKey(routeName));
+  if(rows&&rows.length){
+    rows.forEach((row,i)=>{
+      if(i>0)box.appendChild(document.createElement('hr'));
+      const detail=document.createElement('div');detail.className='tooltip-detail';
+      const find=name=>Object.keys(row).find(k=>normalizeKey(k)===normalizeKey(name));
+      const entries=SHEETS_CONFIG.fields.length
+        ?SHEETS_CONFIG.fields.map(f=>{const k=find(f.field);return[f.label||f.field,k?row[k]:'']})
+        :Object.entries(row).filter(([k])=>normalizeKey(k)!==normalizeKey(SHEETS_CONFIG.idField));
+      appendRows(detail,entries);box.appendChild(detail);
+    });
+  }else{
+    const note=document.createElement('div');note.className='tooltip-note';
+    note.textContent=SHEETS_CONFIG.url?'Detail rute ini tidak ditemukan di Google Sheets. Menampilkan atribut GeoJSON.':'Google Sheets belum diatur. Menampilkan atribut GeoJSON.';
+    box.appendChild(note);
+    const detail=document.createElement('div');detail.className='tooltip-detail';
+    const entries=Object.entries(geoProps||{});
+    if(entries.length)appendRows(detail,entries);else detail.textContent='Tidak ada detail tambahan';
+    box.appendChild(detail);
+  }
+  return box;
+}
+loadSheets();
+function featureStyle(color,hover){return{color,weight:hover?5:3,opacity:1,fillColor:color,fillOpacity:.15}}
+function setRouteVisible(key,visible){const layer=routeLayers.get(key);if(!layer)return;if(visible){layer.addTo(map)}else{map.removeLayer(layer)};updateRouteCount()}
+function updateRouteCount(){let count=0;routeLayers.forEach(layer=>{if(map.hasLayer(layer))count++});document.getElementById('roRoutes').textContent=count;routeCountEl.textContent=`${routeLayers.size} rute tersedia · ${count} dipilih`}
+function addRouteControl(route){routeIndex.push(route)}
+function buildRoutes(geojson){if(!geojson||!Array.isArray(geojson.features))throw new Error('GeoJSON must be a FeatureCollection with a features array.');const features=geojson.features.filter(f=>f&&f.geometry);if(!features.length)throw new Error('No route features were found.');const propertyNames=Object.keys(features[0].properties||{});const normalizedNames=new Map(propertyNames.map(k=>[normalizeKey(k),k]));let routeField=null;for(const candidate of routeFieldCandidates){const actual=normalizedNames.get(normalizeKey(candidate));if(actual&&features.some(f=>propertyValue((f.properties||{})[actual]).trim())){routeField=actual;break}}
+const groups=new Map();features.forEach((feature,index)=>{let name=routeField?safeRouteKey((feature.properties||{})[routeField]):'';if(!name){const fallback=feature.properties&&(feature.properties.route_id||feature.properties.name||feature.id);name=fallback?safeRouteKey(fallback):`Route ${index+1}`}const key=name; if(!groups.has(key))groups.set(key,{key,name,features:[]});groups.get(key).features.push(feature)});
+const colors=['#4fa3c9','#c98a4b','#6fae72','#d1685a','#a78bca','#d6bd59','#5fc2a4','#e38ba5'];let colorIndex=0;[...groups.values()].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true})).forEach(route=>{const color=colors[colorIndex++%colors.length];const layer=L.geoJSON({type:'FeatureCollection',features:route.features},{style:()=>featureStyle(color,false),onEachFeature:(feature,featureLayer)=>{featureLayer.bindTooltip(()=>makeTooltip(route.name),{sticky:true,direction:'top',className:'route-tooltip'});featureLayer.bindPopup(()=>makeDetailPopup(route.name,feature.properties),{maxWidth:340,className:'route-popup'});featureLayer.on({click:()=>featureLayer.closeTooltip(),mouseover:()=>featureLayer.setStyle(featureStyle(color,true)),mouseout:()=>featureLayer.setStyle(featureStyle(color,false))})}});routeLayers.set(route.key,layer);addRouteControl(route)});
+if(!routeField){document.getElementById('routeHint').textContent='Route name property was not found; showing each GeoJSON feature as a separate selectable route. Add a route_name/route_id property to group segments.'}else{document.getElementById('routeHint').textContent=`Ketik untuk mencari rute, lalu pilih dari daftar. Klik garis rute untuk detail (kolom nama rute: ${routeField}).`}
+updateRouteCount();connStatus.innerHTML='<span class="dot"></span>'+features.length+' route features loaded';statusMsg.textContent=`${groups.size} bus routes found. Select routes from the sidebar; hover a line for details.`}
+fetch(DATA_FILE).then(response=>{if(!response.ok)throw new Error('HTTP '+response.status);return response.json()}).then(buildRoutes).catch(error=>{connStatus.innerHTML='<span class="dot off"></span>route data could not be loaded';routeCountEl.textContent='Tidak ada rute';statusMsg.textContent='Could not load '+DATA_FILE+': '+error.message});
+let activeRouteKey=null,highlight=-1;
+const openOptions=()=>routeOptionsEl.classList.add('open'),closeOptions=()=>{routeOptionsEl.classList.remove('open');highlight=-1};
+function selectRoute(key){
+  if(activeRouteKey)setRouteVisible(activeRouteKey,false);   // sembunyikan rute sebelumnya
+  activeRouteKey=key||null;
+  if(!activeRouteKey){routeSearch.value='';closeOptions();return}
+  const route=routeIndex.find(r=>r.key===key);routeSearch.value=route.name;closeOptions();
+  setRouteVisible(key,true);                                  // tampilkan rute terpilih
+  const bounds=routeLayers.get(key).getBounds();
+  if(bounds.isValid())map.fitBounds(bounds,{padding:[24,24],maxZoom:15});
+}
+function renderOptions(query){
+  const nq=normalizeKey(query||'');routeOptionsEl.innerHTML='';highlight=-1;
+  const list=routeIndex.filter(r=>!nq||normalizeKey(r.name).includes(nq));
+  if(!list.length){const li=document.createElement('li');li.className='empty';li.textContent='Rute tidak ditemukan';routeOptionsEl.appendChild(li);return}
+  list.forEach(r=>{const li=document.createElement('li'),name=document.createElement('span'),count=document.createElement('small');li.dataset.key=r.key;name.textContent=r.name;count.textContent=r.features.length+' segmen';li.append(name,count);li.addEventListener('click',()=>selectRoute(r.key));routeOptionsEl.appendChild(li)});
+}
+routeSearch.addEventListener('focus',()=>{renderOptions('');openOptions();routeSearch.select()});
+routeSearch.addEventListener('click',openOptions);
+routeSearch.addEventListener('input',()=>{renderOptions(routeSearch.value);openOptions()});
+routeSearch.addEventListener('keydown',e=>{
+  const items=[...routeOptionsEl.querySelectorAll('li[data-key]')];
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();openOptions();if(!items.length)return;highlight=(highlight+(e.key==='ArrowDown'?1:-1)+items.length)%items.length;items.forEach((li,i)=>li.classList.toggle('hl',i===highlight));items[highlight].scrollIntoView({block:'nearest'})}
+  else if(e.key==='Enter'){e.preventDefault();const li=items[highlight>=0?highlight:0];if(li)selectRoute(li.dataset.key)}
+  else if(e.key==='Escape'){closeOptions()}
+});
+document.addEventListener('click',e=>{if(!document.getElementById('routeCombo').contains(e.target))closeOptions()});
+document.getElementById('clearRoutes').addEventListener('click',()=>selectRoute(null));
+document.getElementById('refreshBtn').addEventListener('click',()=>location.reload());document.getElementById('fitBtn').addEventListener('click',()=>{const selected=[];routeLayers.forEach(layer=>{if(map.hasLayer(layer))selected.push(layer)});if(!selected.length){map.setView(INITIAL_VIEW,INITIAL_ZOOM);return}const bounds=L.featureGroup(selected).getBounds();if(bounds.isValid())map.fitBounds(bounds,{padding:[24,24],maxZoom:15})});
+map.on('mousemove',e=>{document.getElementById('roLat').textContent=e.latlng.lat.toFixed(5);document.getElementById('roLon').textContent=e.latlng.lng.toFixed(5)});map.on('zoomend',()=>{document.getElementById('roZoom').textContent=map.getZoom()});document.getElementById('roZoom').textContent=map.getZoom();
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const parts=e.target.value.split(',').map(s=>parseFloat(s.trim()));if(parts.length===2&&parts.every(Number.isFinite)){map.setView([parts[0],parts[1]],12);L.circleMarker([parts[0],parts[1]],{radius:6,color:'#d1685a',weight:2,fillOpacity:.3}).addTo(map)}});
 </script>
 </body>
 </html>
