@@ -37,7 +37,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 // Route names are read from GeoJSON properties (common route/name fields are detected automatically).
-const DATA_FILE='repro.geojson';
+const DATA_FILE='route.geojson';
 const INITIAL_VIEW=[-2.5,118.0], INITIAL_ZOOM=5;
 const map=L.map('map',{zoomControl:false,attributionControl:true}).setView(INITIAL_VIEW,INITIAL_ZOOM);
 L.control.zoom({position:'bottomright'}).addTo(map);L.control.scale({position:'bottomleft',metric:true,imperial:false}).addTo(map);
